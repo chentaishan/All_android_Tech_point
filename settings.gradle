@@ -1,2 +1,2 @@
-include ':app'
+include ':app', ':selfview', ':test_xmlpullparse', ':thread_producer_consumer'
 rootProject.name='All_Tech_point'
