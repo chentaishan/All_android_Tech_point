@@ -2,8 +2,15 @@ package com.example.circlemenu;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <pre>
@@ -22,19 +29,36 @@ public class CircleActivity extends Activity
 			R.drawable.home_mbank_2_normal, R.drawable.home_mbank_3_normal,
 			R.drawable.home_mbank_4_normal, R.drawable.home_mbank_5_normal,
 			R.drawable.home_mbank_6_normal };
+	private List<MeunItem> meunItems;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		
+
+		initData();
 		//自已切换布局文件看效果
 		setContentView(R.layout.activity_main02);
 //		setContentView(R.layout.activity_main);
 
 		mCircleMenuLayout = (CircleMenuLayout) findViewById(R.id.id_menulayout);
-		mCircleMenuLayout.setMenuItemIconsAndTexts(mItemImgs, mItemTexts);
-		
+//		mCircleMenuLayout.setMenuItemIconsAndTexts(mItemImgs, mItemTexts);
+
+		mCircleMenuLayout.setListData(meunItems, new ICircleCallback() {
+			@Override
+			public View getItemView(ViewGroup parent,MeunItem item) {
+				View root = LayoutInflater.from(parent.getContext()).inflate(R.layout.circle_menu_item,parent,false);
+				ImageView iv = (ImageView) root
+						.findViewById(R.id.id_circle_menu_item_image);
+				TextView tv = (TextView) root
+						.findViewById(R.id.id_circle_menu_item_text);
+
+				iv.setImageResource(item.getImgId());
+				iv.setVisibility(View.VISIBLE);
+				tv.setText(item.getTitle());
+				return root;
+			}
+		});
 		
 
 		mCircleMenuLayout.setOnMenuItemClickListener(new CircleMenuLayout.OnMenuItemClickListener()
@@ -58,6 +82,18 @@ public class CircleActivity extends Activity
 			}
 		});
 		
+	}
+
+	private void initData() {
+
+		meunItems = new ArrayList<>();
+
+		meunItems.add(new MeunItem(R.drawable.home_mbank_1_normal,"安全中心"));
+		meunItems.add(new MeunItem(R.drawable.home_mbank_2_normal,"安全中心"));
+		meunItems.add(new MeunItem(R.drawable.home_mbank_3_normal,"安全中心"));
+		meunItems.add(new MeunItem(R.drawable.home_mbank_4_normal,"安全中心"));
+		meunItems.add(new MeunItem(R.drawable.home_mbank_5_normal,"安全中心"));
+		meunItems.add(new MeunItem(R.drawable.home_mbank_6_normal,"安全P心"));
 	}
 
 }

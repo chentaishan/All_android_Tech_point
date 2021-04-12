@@ -11,6 +11,8 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.List;
+
 public class CircleMenuLayout extends ViewGroup {
     private int mRadius;
     /**
@@ -77,6 +79,14 @@ public class CircleMenuLayout extends ViewGroup {
     private boolean isFling;
 
     private int mMenuItemLayoutId = R.layout.circle_menu_item;
+    private List<MeunItem> meunItems;
+    private ICircleCallback iCircleCallback;
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        
+    }
 
     public CircleMenuLayout(Context context, AttributeSet attrs)
     {
@@ -411,6 +421,53 @@ public class CircleMenuLayout extends ViewGroup {
             return tmpY >= 0 ? 3 : 2;
         }
 
+    }
+    
+    public void setListData(List<MeunItem>  meunItems,ICircleCallback iCircleCallback){
+
+        this.meunItems = meunItems;
+        this.iCircleCallback = iCircleCallback;
+
+        if (this.meunItems==null){
+            throw new IllegalArgumentException("数据为null");
+        }
+
+        addMenuItemsByList();
+    }
+
+    private void addMenuItemsByList() {
+
+        this.mMenuItemCount = this.meunItems.size();
+        /**
+         * 根据用户设置的参数，初始化view
+         */
+        for (int i = 0; i < mMenuItemCount; i++)
+        {
+            final int j = i;
+
+            MeunItem item = this.meunItems.get(i);
+            View itemView = iCircleCallback.getItemView(this,item);
+            if (itemView != null)
+            {
+                itemView.setVisibility(View.VISIBLE);
+
+                itemView.setOnClickListener(new OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+
+                        if (mOnMenuItemClickListener != null)
+                        {
+                            mOnMenuItemClickListener.itemClick(v, j);
+                        }
+                    }
+                });
+            }
+
+            // 添加view到容器中
+            addView(itemView);
+        }
     }
 
     /**
