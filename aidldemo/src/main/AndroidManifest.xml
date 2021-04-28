@@ -10,12 +10,25 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.All_Tech_point">
         <activity android:name=".MainActivity">
+
+        </activity>
+
+        <activity android:name=".MessengerActivity">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name=".MessengerService"
+            android:process=":remote" >
+            <intent-filter>
+                <action android:name="com.ryg.MessengerService.launch" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>
