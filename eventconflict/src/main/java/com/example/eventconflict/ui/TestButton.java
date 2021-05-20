@@ -41,18 +41,27 @@ public class TestButton extends TextView {
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        //获取 屏幕里坐标
         int x = (int) event.getRawX();
         int y = (int) event.getRawY();
+
+        Log.d(TAG, "onTouchEvent: x="+x+"  y="+y);
         switch (event.getAction()) {
         case MotionEvent.ACTION_DOWN: {
             break;
         }
         case MotionEvent.ACTION_MOVE: {
+            //记录这次和上次滑动的偏移量
             int deltaX = x - mLastX;
             int deltaY = y - mLastY;
             Log.d(TAG, "move, deltaX:" + deltaX + " deltaY:" + deltaY);
-            int translationX = (int) ViewHelper.getTranslationX(this) + deltaX;
+            //获取当前的位置+ 偏移量 = 要位移的坐标
+            int translationX = (int)ViewHelper.getTranslationX(this) + deltaX;
             int translationY = (int)ViewHelper.getTranslationY(this) + deltaY;
+            if (translationX<0)
+                translationX=0;
+            if (translationY<0)
+                translationY=0;
             ViewHelper.setTranslationX(this, translationX);
             ViewHelper.setTranslationY(this, translationY);
             break;
