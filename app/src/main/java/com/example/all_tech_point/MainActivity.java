@@ -4,96 +4,88 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements GestureDetector.OnGestureListener {
 
-    private static final String TAG = "MainActivity";
-//    Handler handler = new Handler() {
-//        @Override
-//        public void handleMessage(@NonNull Message msg) {
-//            super.handleMessage(msg);
-//
-//            Log.d(TAG, "handleMessage: ");
-//        }
-//    };
-    private TextView mMyview;
-    private MyLinear mLinear;
+
+    private GestureDetector mGestureDetector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        initView();
-
-
-        try {
-            Thread.sleep(200);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-//        Message obtain = Message.obtain();
-//        obtain.obj = "hello";
-//        obtain.what = 1;
-//        handler.sendMessage(obtain);
-    }
-
-    private void initView() {
-//        mMyview =   findViewById(R.id.myview);
-        mLinear = (MyLinear) findViewById(R.id.linear);
-
-
+        mGestureDetector = new GestureDetector(this);
+        //解决长按屏幕后无法拖动的现象 mGestureDetector.setIsLongpressEnabled(false);
+        mGestureDetector.setIsLongpressEnabled(false);
 
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    public boolean onTouchEvent(MotionEvent event) {
+        boolean consume = mGestureDetector.onTouchEvent(event);
 
-        mMyview.post(new Runnable() {
-            @Override
-            public void run() {
-                int width = mMyview.getMeasuredWidth();
-                int height = mMyview.getMeasuredHeight();
-                Log.d(TAG, "1mMyview.post: "+width);
-                Log.d(TAG, "1mMyview.post: "+height);
-
-
-            }
-        });
-
-        mMyview.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-
-
-            @Override
-            public boolean onPreDraw() {
-
-                mMyview.getViewTreeObserver().removeOnPreDrawListener(this);
-                int width = mMyview.getMeasuredWidth();
-                int height = mMyview.getMeasuredHeight();
-                Log.d(TAG, "2mMyview.post: "+width);
-                Log.d(TAG, "2mMyview.post: "+height);
-                return false;
-            }
-        });
-
-
+        Log.d(TAG, "onTouchEvent: ");
+        return consume;
     }
 
     @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
+    public boolean onDown(MotionEvent e) {
+        Log.d(TAG, "onDown: ");
+        return false;
+    }
 
-        if (hasFocus){
-            int width = mMyview.getMeasuredWidth();
-            int height = mMyview.getMeasuredHeight();
-            Log.d(TAG, "mMyv3iew.post: "+width);
-            Log.d(TAG, "mMyvie3w.post: "+height);
-        }
+    @Override
+    public void onShowPress(MotionEvent e) {
 
+        Log.d(TAG, "onShowPress: ");
+    }
+
+    @Override
+    public boolean onSingleTapUp(MotionEvent e) {
+        Log.d(TAG, "onSingleTapUp: ");
+        return false;
+    }
+
+    /**
+     * 手指按下屏幕并滑动
+     * @param e1
+     * @param e2
+     * @param distanceX
+     * @param distanceY
+     * @return
+     */
+    @Override
+    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+        Log.d(TAG, "onScroll: ");
+        return false;
+    }
+
+    @Override
+    public void onLongPress(MotionEvent e) {
+        Log.d(TAG, "onLongPress: ");
+
+    }
+
+    private static final String TAG = "MainActivity";
+
+    /**
+     * 快速滑动，down --move  --up
+     * @param e1
+     * @param e2
+     * @param velocityX
+     * @param velocityY
+     * @return
+     */
+    @Override
+    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        Log.d(TAG, "onFling: ");
+        return false;
     }
 }

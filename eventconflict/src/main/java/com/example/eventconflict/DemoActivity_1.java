@@ -37,6 +37,8 @@ public class DemoActivity_1 extends Activity {
         mListContainer = (HorizontalScrollViewEx) findViewById(R.id.container);
         final int screenWidth = MyUtils.getScreenMetrics(this).widthPixels;
         final int screenHeight = MyUtils.getScreenMetrics(this).heightPixels;
+
+        Log.d(TAG, "initView--width: "+screenWidth+" height:"+screenHeight);
         for (int i = 0; i < 3; i++) {
             ViewGroup layout = (ViewGroup) inflater.inflate(
                     R.layout.content_layout, mListContainer, false);
@@ -47,6 +49,16 @@ public class DemoActivity_1 extends Activity {
             createList(layout);
             mListContainer.addView(layout);
         }
+    }
+
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+
+        int measuredWidth = mListContainer.getMeasuredWidth();
+
+        Log.d(TAG, "onWindowFocusChanged: "+measuredWidth);
     }
 
     private void createList(ViewGroup layout) {

@@ -1,5 +1,5 @@
 // Book.aidl
-package com.example.aidldemo;
+package com.example.aidl_server;
 
 // Declare any non-default types here with import statements
 
@@ -10,6 +10,5 @@ interface Book {
      */
     void basicTypes(int anInt, long aLong, boolean aBoolean, float aFloat,
             double aDouble, String aString);
-
             void xxx();
 }

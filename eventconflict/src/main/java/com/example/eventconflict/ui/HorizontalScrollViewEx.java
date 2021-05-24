@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.Scroller;
 
@@ -25,6 +26,7 @@ public class HorizontalScrollViewEx extends ViewGroup {
 
     private Scroller mScroller;
     private VelocityTracker mVelocityTracker;
+    private int scaledTouchSlop;
 
     public HorizontalScrollViewEx(Context context) {
         super(context);
@@ -37,7 +39,7 @@ public class HorizontalScrollViewEx extends ViewGroup {
     }
 
     public HorizontalScrollViewEx(Context context, AttributeSet attrs,
-            int defStyle) {
+                                  int defStyle) {
         super(context, attrs, defStyle);
         init();
     }
@@ -45,7 +47,11 @@ public class HorizontalScrollViewEx extends ViewGroup {
     private void init() {
         mScroller = new Scroller(getContext());
         mVelocityTracker = VelocityTracker.obtain();
+
+        scaledTouchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
     }
+
+    int downScrollX;
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent event) {
@@ -54,39 +60,36 @@ public class HorizontalScrollViewEx extends ViewGroup {
         int y = (int) event.getY();
 
         switch (event.getAction()) {
-        case MotionEvent.ACTION_DOWN: {
-            int xx = (int) event.getX();
-            Log.d(TAG, "ACTION_DOWN: xx=="+xx);
-            intercepted = false;
-            if (!mScroller.isFinished()) {
-                mScroller.abortAnimation();
-                intercepted = true;
-            }
-            break;
-        }
-        case MotionEvent.ACTION_MOVE: {
-            int temp = (int) event.getX();
-            Log.d(TAG, "ACTION_MOVE: temp=="+temp);
+            case MotionEvent.ACTION_DOWN: {
+                downScrollX = getScrollX();
 
-
-            int deltaX = x - mLastXIntercept;
-            int deltaY = y - mLastYIntercept;
-            if (Math.abs(deltaX) > Math.abs(deltaY)) {
-                intercepted = true;
-            } else {
                 intercepted = false;
+                if (!mScroller.isFinished()) {
+                    mScroller.abortAnimation();
+                    intercepted = true;
+                }
+                break;
             }
-            break;
-        }
-        case MotionEvent.ACTION_UP: {
-            intercepted = false;
-            break;
-        }
-        default:
-            break;
+            case MotionEvent.ACTION_MOVE: {
+
+                int deltaX = x - mLastXIntercept;
+                int deltaY = y - mLastYIntercept;
+                if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                    intercepted = true;
+                } else {
+                    intercepted = false;
+                }
+                break;
+            }
+            case MotionEvent.ACTION_UP: {
+                intercepted = false;
+                break;
+            }
+            default:
+                break;
         }
 
-        Log.d(TAG, "intercepted=" + intercepted);
+
         mLastX = x;
         mLastY = y;
         mLastXIntercept = x;
@@ -100,46 +103,68 @@ public class HorizontalScrollViewEx extends ViewGroup {
         mVelocityTracker.addMovement(event);
         int x = (int) event.getX();
         int y = (int) event.getY();
+
         switch (event.getAction()) {
-        case MotionEvent.ACTION_DOWN: {
-            if (!mScroller.isFinished()) {
-                mScroller.abortAnimation();
+            case MotionEvent.ACTION_DOWN:
+                if (!mScroller.isFinished()) {
+                    mScroller.abortAnimation();
+                }
+                break;
+
+            case MotionEvent.ACTION_MOVE: {
+                int scrollX = getScrollX();
+                Log.d(TAG, "ACTION_MOVE: scrollX:" + scrollX);
+                int deltaX = x - mLastX;
+                int deltaY = y - mLastY;
+
+                if ((mChildIndex == 0 && deltaX > 0) || mChildIndex == 2 && deltaX < 0) {
+                    mLastX = x;
+                    mLastY = y;
+                    return false;
+                }
+                Log.d(TAG, "ACTION_MOVE:22 (x - mLastX):" + -deltaX);
+                scrollBy(-deltaX, 0);
+                break;
             }
-            break;
-        }
-        case MotionEvent.ACTION_MOVE: {
+            case MotionEvent.ACTION_UP: {
+                int scrollX = getScrollX();
 
-            int deltaX = x - mLastX;
-            int deltaY = y - mLastY;
-            int temp = (int) event.getX();
+                mVelocityTracker.computeCurrentVelocity(100);
+                float xVelocity = mVelocityTracker.getXVelocity();
+                Log.d(TAG, "ACTION_UP: 11 速度=" + xVelocity + "--scrollX - downScrollX=" + (scrollX - downScrollX));
+
+                int distance = scrollX - downScrollX;
+                if (Math.abs(distance) > scaledTouchSlop) {
+                    //向右滑动
+                    if (xVelocity >= 30) {
+                        mChildIndex = mChildIndex > 0 ? mChildIndex-- : 0;
+
+                        int dx = mChildIndex * mChildWidth - scrollX;
+
+                        Log.d(TAG, "onTouchEvent: 1   单项宽度:"+dx +"  抬起时滑动距离:"+distance);
+                        smoothScrollBy(scrollX,  dx);
+                    } else if (xVelocity <= -30) { //向左滑动
+                        mChildIndex++;
+                        if (mChildIndex >= getChildCount()) {
+                            mChildIndex = getChildCount() - 1;
+                        }
+                        int dx = mChildIndex * mChildWidth - scrollX;
 
 
-            scrollBy(-deltaX, 0);
-            break;
-        }
-        case MotionEvent.ACTION_UP: {
-            int scrollX = getScrollX();
-            int scrollToChildIndex = scrollX / mChildWidth;
-            mVelocityTracker.computeCurrentVelocity(1000);
-            float xVelocity = mVelocityTracker.getXVelocity();
-            if (Math.abs(xVelocity) >= 50) {
-                mChildIndex = xVelocity > 0 ? mChildIndex - 1 : mChildIndex + 1;
-            } else {
-                mChildIndex = (scrollX + mChildWidth / 2) / mChildWidth;
+                        Log.d(TAG, "onTouchEvent: 2 dx："+dx  +"  scrollX:"+scrollX);
+                        smoothScrollBy(scrollX, dx );
+                    }
+                    mVelocityTracker.clear();
+                }
+                break;
             }
-            mChildIndex = Math.max(0, Math.min(mChildIndex, mChildrenSize - 1));
-            Log.d(TAG, "onTouchEvent: "+mChildIndex);
-            int dx = mChildIndex * mChildWidth - scrollX;
-            smoothScrollBy(dx, 0);
-            mVelocityTracker.clear();
-            break;
-        }
-        default:
-            break;
+            default:
+                break;
         }
 
         mLastX = x;
         mLastY = y;
+        Log.d(TAG, "ACTION:4 mLastX=" + mLastX);
         return true;
     }
 
@@ -184,6 +209,8 @@ public class HorizontalScrollViewEx extends ViewGroup {
             if (childView.getVisibility() != View.GONE) {
                 final int childWidth = childView.getMeasuredWidth();
                 mChildWidth = childWidth;
+
+                Log.d(TAG, "onLayout: l:" + childLeft + "  r:" + (childLeft + childWidth));
                 childView.layout(childLeft, 0, childLeft + childWidth,
                         childView.getMeasuredHeight());
                 childLeft += childWidth;
@@ -191,14 +218,15 @@ public class HorizontalScrollViewEx extends ViewGroup {
         }
     }
 
-    private void smoothScrollBy(int dx, int dy) {
-        mScroller.startScroll(getScrollX(), 0, dx, 0, 500);
+    private void smoothScrollBy(int startx, int dx) {
+        mScroller.startScroll(startx, 0, dx, 0);
         invalidate();
     }
 
     @Override
     public void computeScroll() {
         if (mScroller.computeScrollOffset()) {
+            Log.d(TAG, "computeScroll: " + mScroller.getCurrX());
             scrollTo(mScroller.getCurrX(), mScroller.getCurrY());
             postInvalidate();
         }
