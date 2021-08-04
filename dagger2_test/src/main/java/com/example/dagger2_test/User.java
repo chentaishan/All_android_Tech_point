@@ -1,5 +1,9 @@
 package com.example.dagger2_test;
 
+
+import javax.inject.Singleton;
+
+@Singleton
 public class User {
     String name;
 

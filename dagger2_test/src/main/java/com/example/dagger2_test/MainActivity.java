@@ -1,6 +1,8 @@
 package com.example.dagger2_test;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,6 +16,7 @@ public class MainActivity extends AppCompatActivity {
     @Inject
     DaggerPresenter daggerPresenter;
     private TextView mText;
+    private Button mClick1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,17 +34,24 @@ public class MainActivity extends AppCompatActivity {
 
         initViews();
 
-        //调用presenter的方法
-        daggerPresenter.showName();
 
     }
 
     public void showName(String name) {
 
-        mText.setText(name);
+        mText.setText(name + "user==" + daggerPresenter.user);
     }
 
     private void initViews() {
         mText = findViewById(R.id.text);
+        mClick1 = findViewById(R.id.click1);
+        mClick1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //调用presenter的方法
+                daggerPresenter.showName();
+
+            }
+        });
     }
 }

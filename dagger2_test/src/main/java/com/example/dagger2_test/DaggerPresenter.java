@@ -10,7 +10,7 @@ public class DaggerPresenter {
     MainActivity activity;
 
     User user;
-    @Inject
+
     public DaggerPresenter(MainActivity activity, User user) {
         this.activity = activity;
         this.user = user;
