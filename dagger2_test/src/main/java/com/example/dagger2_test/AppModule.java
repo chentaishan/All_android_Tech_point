@@ -5,6 +5,13 @@ import javax.inject.Inject;
 import dagger.Module;
 import dagger.Provides;
 
+/**
+ * 模块为了维护各个对象  activity user  Presenter对象
+ *  1、如何创建？
+ *  2、对象之间的关系？
+ *
+ *  3、注意Provides注解，是提供对象实例的创建方法
+ */
 @Module
 public class AppModule {
 
