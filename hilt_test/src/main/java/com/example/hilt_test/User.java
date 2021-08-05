@@ -7,8 +7,6 @@ public class User {
 
     Address address;
 
-    public User() {
-    }
     @Inject
     public User( Address address) {
 

@@ -7,6 +7,8 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.hilt_test.car.Truck;
+
 import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
@@ -16,6 +18,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Inject
     User user;
+
+    @Inject
+    Truck truck;
+
     private Button mClick1;
     private TextView mResult;
 
@@ -33,6 +39,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 mResult.setText(user.toString());
+
+                truck.deliver();
+//                mResult.setText("truck="+);
             }
         });
     }
