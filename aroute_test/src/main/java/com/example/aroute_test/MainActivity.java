@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 ARouter.getInstance().build("/test/activity2")
+                        .withSerializable("user",new User("lili"))
 
                         .withString("xx","xx")
                         .navigation();
