@@ -1,13 +1,19 @@
 package com.example.hilt_test.car;
 
+import android.content.Context;
 import android.util.Log;
 
 import javax.inject.Inject;
 
-public class Truck {
-    @Inject
-    public Truck() {
+import dagger.hilt.android.qualifiers.ActivityContext;
 
+public class Truck {
+    private Context context;
+
+    @Inject
+    public Truck(@ActivityContext Context context) {
+
+        this.context = context;
     }
 
 
