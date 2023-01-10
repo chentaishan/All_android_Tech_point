@@ -20,7 +20,7 @@ It is important to note that only one producer can use the TextureView. For inst
 The following example demonstrates how to render the camera preview into a TextureView:
 
 ```java
-    public class LiveCameraActivity extends Activity implements TextureView.SurfaceTextureListener {
+public class LiveCameraActivity extends Activity implements TextureView.SurfaceTextureListener {
         private Camera mCamera;
         private TextureView mTextureView;
 
