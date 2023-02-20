@@ -52,12 +52,21 @@ fun maxProfit(prices: IntArray?): Int {
 向右轮转 3 步: [5,6,7,1,2,3,4]
  */
 fun rotate(nums: IntArray, k: Int): Unit {
+    fun toRight() {
+        var x = nums.size - 1
+        var last = nums[x]
+        while (x < nums.size && x >= 1) {
+            nums[x] = nums[--x]
+        }
+        nums[0] = last
+        println("nums=$nums")
+    }
 
-    val copyOfRange = nums.copyOfRange(nums.size - k, nums.size+1)
-    println("copy=$copyOfRange")
-
-
-
+    var index = 0
+    while (index < k) {
+        toRight()
+        index++
+    }
 
 }
 
