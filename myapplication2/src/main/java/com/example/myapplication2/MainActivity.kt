@@ -1,0 +1,21 @@
+package com.example.myapplication2
+
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+
+class MainActivity : AppCompatActivity() {
+    var directoryObserver:DirectoryObserver?=null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        directoryObserver = DirectoryObserver(cacheDir.absolutePath)
+        directoryObserver!!.start()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        directoryObserver?.stop()
+    }
+}
