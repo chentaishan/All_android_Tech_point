@@ -15,4 +15,4 @@ rootProject.name='All_Tech_point'
 //include ':hilt_test'
 include ':leetcode'
 
-include ':myapplication2'
+include ':testDirectoryObserver'
